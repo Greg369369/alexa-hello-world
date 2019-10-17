@@ -70,7 +70,7 @@ class Response:
     session_storage: Dict[Any, Any] = field(default_factory=defaultdict)
     end_session: bool = True
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         output = {
             "version": "1.0",
             "sessionAttributes": self.session_storage,
