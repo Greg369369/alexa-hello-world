@@ -44,7 +44,7 @@ def handle_request_launch(request: alexa.Request) -> alexa.Response:
     return response
 
 
-def handle_request_help(request: alexa.Request) -> alexa.Response:
+def handle_intent_help(request: alexa.Request) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "You can ask me basic questions about the hackathon. For example, try asking: "
@@ -79,12 +79,22 @@ def handle_intent_event_time(request: alexa.IntentRequest) -> alexa.Response:
     return response
 
 
+def handle_intent_stop_cancel(request: alexa.Request) -> alexa.Response:
+    response = alexa.Response()
+
+    response.speech = "Goodbye."
+
+    return response
+
+
 request_handlers = {
     alexa.Request.TYPE_LAUNCH: handle_request_launch,
-    alexa.Request.TYPE_HELP: handle_request_help
 }
 
 intent_handlers = {
+    alexa.Request.INTENT_HELP: handle_intent_help,
+    alexa.Request.INTENT_CANCEL: handle_intent_stop_cancel,
+    alexa.Request.INTENT_STOP: handle_intent_stop_cancel,
     "what_day": handle_intent_what_day,
     "event_time": handle_intent_event_time
 }

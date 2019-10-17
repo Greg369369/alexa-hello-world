@@ -10,7 +10,13 @@ class Request:
 
     TYPE_INTENT = "IntentRequest"
     TYPE_LAUNCH = "LaunchRequest"
-    TYPE_HELP = "HelpRequest"
+    TYPE_SESSION_END = "SessionEndedRequest"
+
+    INTENT_HELP = "AMAZON.HelpIntent"
+    INTENT_CANCEL = "AMAZON.CancelIntent"
+    INTENT_STOP = "AMAZON.StopIntent"
+    INTENT_YES = "AMAZON.YesIntent"
+    INTENT_NO = "AMAZON.NoIntent"
 
     def request_type(self) -> str:
         return self.event["request"]["type"]
