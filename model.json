@@ -1,0 +1,196 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "hello world",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "what_day",
+                    "slots": [],
+                    "samples": [
+                        "on which calendar date shall the hackathon commence",
+                        "on what day will the hackathon take place",
+                        "what day is the hackathon"
+                    ]
+                },
+                {
+                    "name": "event_time",
+                    "slots": [
+                        {
+                            "name": "event_name",
+                            "type": "hackathon_event",
+                            "samples": [
+                                "{event_name}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "what time is {event_name}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "hackathon_event",
+                    "values": [
+                        {
+                            "id": "OPEN_CEREMONY",
+                            "name": {
+                                "value": "Opening Ceremony"
+                            }
+                        },
+                        {
+                            "id": "BEGIN_HACK",
+                            "name": {
+                                "value": "Hacking Begins",
+                                "synonyms": [
+                                    "hacking start"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "IDEA_JAM",
+                            "name": {
+                                "value": "Idea Jam"
+                            }
+                        },
+                        {
+                            "id": "GITHUB_WORKSHOP",
+                            "name": {
+                                "value": "Intro to GitHub Workshop",
+                                "synonyms": [
+                                    "github workshop"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "LUNCH",
+                            "name": {
+                                "value": "Lunch",
+                                "synonyms": [
+                                    "first meal"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "CUP_STACK",
+                            "name": {
+                                "value": "Cup Stacking"
+                            }
+                        },
+                        {
+                            "id": "VR_DEMO",
+                            "name": {
+                                "value": "VR Demo"
+                            }
+                        },
+                        {
+                            "id": "END_HACK",
+                            "name": {
+                                "value": "Hacking Ends",
+                                "synonyms": [
+                                    "stop hacking",
+                                    "hacking end"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "DINNER",
+                            "name": {
+                                "value": "Dinner",
+                                "synonyms": [
+                                    "last meal",
+                                    "second meal"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "JUDGE",
+                            "name": {
+                                "value": "Judging and Demos",
+                                "synonyms": [
+                                    "presentation",
+                                    "judge",
+                                    "demos",
+                                    "judging"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "CLOSE_CEREMONY",
+                            "name": {
+                                "value": "Closing Ceremony"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "event_time",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "event_name",
+                            "type": "hackathon_event",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.724419789145.63168636983"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.724419789145.63168636983.1373139255227"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Slot.Validation.724419789145.63168636983.1373139255227",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Sorry, I don't know that event. Which event do you want the time for?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.724419789145.63168636983",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Which event?"
+                    }
+                ]
+            }
+        ]
+    }
+}
