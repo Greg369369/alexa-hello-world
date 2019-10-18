@@ -22,7 +22,9 @@ class Request:
         return self.event["request"]["type"]
 
     def read_session_storage(self) -> Dict[Any, Any]:
-        return self.event["sessionAttributes"]
+        if "sessionAttributes" in self.event:
+            return self.event["sessionAttributes"]
+        return {}
 
 
 @dataclass
