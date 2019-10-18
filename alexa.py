@@ -158,12 +158,22 @@ class Router:
             if intent_name in self.intent_handlers:
                 handler_found = True
                 handler = self.intent_handlers[intent_name]
-                response = handler(intent_request, logger)
+                
+                try:
+                    response = handler(intent_request, logger)
+                except:
+                    response = Response(speech="Sorry, I encountered an error. Try asking again.")
+                    logger.exception("Intent handler threw exception! RECOVERING.")
 
         elif request_type in self.request_handlers:
             handler_found = True
             handler = self.request_handlers[request_type]
-            response = handler(request, logger)
+            
+            try:
+                response = handler(request, logger)
+            except:
+                response = Response(speech="Sorry, I encountered an error. Try asking again.")
+                logger.exception("Request handler threw exception! RECOVERING.")
 
         if not handler_found:
             logger.warning("NO HANDLER FOUND for this request!")
