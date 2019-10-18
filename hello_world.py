@@ -1,5 +1,6 @@
 import alexa
 import random
+import logging
 
 sample_questions = [
     "When is the hackathon?",
@@ -33,7 +34,7 @@ hackathon_events = {
 }
 
 
-def handle_request_launch(request: alexa.Request) -> alexa.Response:
+def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "Hi there! You've successfully launched the Hello World demo skill. "
@@ -44,7 +45,7 @@ def handle_request_launch(request: alexa.Request) -> alexa.Response:
     return response
 
 
-def handle_intent_help(request: alexa.Request) -> alexa.Response:
+def handle_intent_help(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "You can ask me basic questions about the hackathon. For example, try asking: "
@@ -53,7 +54,7 @@ def handle_intent_help(request: alexa.Request) -> alexa.Response:
     return response
 
 
-def handle_intent_what_day(request: alexa.Request) -> alexa.Response:
+def handle_intent_what_day(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "CU hack-it Hello World 2019 will take place on Saturday, October 19th, 2019."
@@ -61,7 +62,7 @@ def handle_intent_what_day(request: alexa.Request) -> alexa.Response:
     return response
 
 
-def handle_intent_event_time(request: alexa.IntentRequest) -> alexa.Response:
+def handle_intent_event_time(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     event_id = request.id_value_of_slot("event_name")
@@ -79,7 +80,7 @@ def handle_intent_event_time(request: alexa.IntentRequest) -> alexa.Response:
     return response
 
 
-def handle_intent_stop_cancel(request: alexa.Request) -> alexa.Response:
+def handle_intent_stop_cancel(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "Goodbye."
@@ -92,6 +93,7 @@ request_handlers = {
 }
 
 intent_handlers = {
+    alexa.Request.INTENT_FALLBACK: handle_intent_help,
     alexa.Request.INTENT_HELP: handle_intent_help,
     alexa.Request.INTENT_CANCEL: handle_intent_stop_cancel,
     alexa.Request.INTENT_STOP: handle_intent_stop_cancel,
