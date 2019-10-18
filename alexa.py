@@ -1,7 +1,8 @@
 import json
 from dataclasses import dataclass, field
 from collections import defaultdict
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List, Tuple
+import logging
 
 @dataclass
 class Request:
@@ -12,6 +13,7 @@ class Request:
     TYPE_LAUNCH = "LaunchRequest"
     TYPE_SESSION_END = "SessionEndedRequest"
 
+    INTENT_FALLBACK = "AMAZON.FallbackIntent"
     INTENT_HELP = "AMAZON.HelpIntent"
     INTENT_CANCEL = "AMAZON.CancelIntent"
     INTENT_STOP = "AMAZON.StopIntent"
@@ -26,6 +28,9 @@ class Request:
             return self.event["sessionAttributes"]
         return {}
 
+    def request_id(self) -> str:
+        return self.event["request"]["requestId"]
+
 
 @dataclass
 class IntentRequest(Request):
@@ -34,13 +39,21 @@ class IntentRequest(Request):
     def intent_name(self) -> str:
         return self.event["request"]["intent"]["name"]
 
+    def has_slots(self) -> bool:
+        return "slots" in self.event["request"]["intent"]
+
+    def filled_slots(self) -> List[str]:
+        if self.has_slots() and len(self.event["request"]["intent"]["slots"]) > 0:
+            return self.event["request"]["intent"]["slots"].keys()
+        return None
+
     def value_of_slot(self, slot_name) -> str:
-        if slot_name in self.event["request"]["intent"]["slots"]:
+        if self.has_slots() and slot_name in self.event["request"]["intent"]["slots"]:
             return self.event["request"]["intent"]["slots"][slot_name]["value"]
         return None
 
     def id_value_of_slot(self, slot_name) -> str:
-        if slot_name not in self.event["request"]["intent"]["slots"]:
+        if not self.has_slots() or slot_name not in self.event["request"]["intent"]["slots"]:
              return None
         
         slot = self.event["request"]["intent"]["slots"][slot_name]
@@ -52,8 +65,17 @@ class IntentRequest(Request):
                     value = value["value"]
                     if "id" in value:
                         return value["id"]
-
         return None
+
+    def full_slot_catalog(self) -> Dict[str, Tuple[str, str]]:
+        catalog = {}
+
+        for slot_name in self.filled_slots():
+            catalog[slot_name] = (
+                self.value_of_slot(slot_name), 
+                self.id_value_of_slot(slot_name))
+
+        return catalog
 
 
 @dataclass
@@ -62,6 +84,17 @@ class Card:
     title: str = ""
     body: str = ""
     image_url: str = ""
+
+    def to_dict(self) -> dict:
+        return {
+            "type": "Standard",
+            "title": self.title,
+            "text": self.body,
+            "image": {
+                "smallImageUrl": self.image_url,
+                "largeImageUrl": self.image_url
+            }
+        }
 
 
 @dataclass
@@ -86,15 +119,7 @@ class Response:
         }
 
         if self.card is not None:
-            output["card"] = {
-                "type": "Standard",
-                "title": self.card.title,
-                "text": self.card.body,
-                "image": {
-                    "smallImageUrl": self.card.image_url,
-                    "largeImageUrl": self.card.image_url
-                }
-            }
+            output["card"] = self.card.to_dict()
         
         return output
 
@@ -103,25 +128,51 @@ class Response:
 class Router:
     """Router helps route an Alexa request to the appropriate response generator."""
 
-    request_handlers: Dict[str, Callable[[Request], Response]]
-    intent_handlers: Dict[str, Callable[[IntentRequest], Response]]
+    request_handlers: Dict[str, Callable[[Request, logging.Logger], Response]]
+    intent_handlers: Dict[str, Callable[[IntentRequest, logging.Logger], Response]]
 
     def handle_request(self, event, context) -> dict:
         request = Request(event)
         request_type = request.request_type()
-        response = Response()
+        
+        logger = logging.getLogger(request.request_id())
+        logger.setLevel(logging.DEBUG)
+
+        handler_found = False
+        response = Response(speech="Sorry, I couldn't route this request. Try asking again.")
+        
+        logger.info("Request received. Type: '%s'", request_type)
 
         if request_type == Request.TYPE_INTENT:
             intent_request = IntentRequest(request.event)
             intent_name = intent_request.intent_name()
 
+            logger.info("Invoking intent. Name: '%s'", intent_name)
+            if intent_request.has_slots():
+                logger.debug("Found %d slot(s): %s", 
+                    len(intent_request.filled_slots()), 
+                    str(intent_request.full_slot_catalog()))
+            else:
+                logger.debug("No slots found.")
+
             if intent_name in self.intent_handlers:
+                handler_found = True
                 handler = self.intent_handlers[intent_name]
-                response = handler(intent_request)
+                response = handler(intent_request, logger)
 
         elif request_type in self.request_handlers:
+            handler_found = True
             handler = self.request_handlers[request_type]
-            response = handler(request)
+            response = handler(request, logger)
+
+        if not handler_found:
+            logger.warning("NO HANDLER FOUND for this request!")
+
+        logger.debug("RESPONSE: '%s'", response.speech)
+        if response.card is not None:
+            logger.debug("CARD: title: '%s', body: '%s', image_url: '%s'",
+                response.card.title, response.card.body, response.card.image_url)
+        logger.debug("END SESSION: %r", response.end_session)
 
         return response.to_dict()
         
