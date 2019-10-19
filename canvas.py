@@ -28,7 +28,7 @@ sample_questions = [
 def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
-    response.speech = "Hi there! You've successfully launched the Clemson Canvas skill. "
+    response.speech = "Hi there! You've successfully launched the Canvas skill. "
     response.speech += "You can ask me questions about your grades, classes, homework assignments on Canvas. What do you want to know?"
 
     response.end_session = False
