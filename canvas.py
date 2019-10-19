@@ -71,30 +71,30 @@ def handle_intent_help(request: alexa.IntentRequest, logger: logging.Logger) -> 
     return response
 
 
-def handle_intent_what_day(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
-    response = alexa.Response()
+# def handle_intent_what_day(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+#     response = alexa.Response()
 
-    response.speech = "CU hack-it Hello World 2019 will take place on Saturday, October 19th, 2019."
+#     response.speech = "CU hack-it Hello World 2019 will take place on Saturday, October 19th, 2019."
 
-    return response
+#     return response
 
 
-def handle_intent_event_time(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
-    response = alexa.Response()
+# def handle_intent_event_time(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+#     response = alexa.Response()
 
-    event_id = request.id_value_of_slot("event_name")
+#     event_id = request.id_value_of_slot("event_name")
 
-    if event_id is None or event_id not in hackathon_events:
-        response.speech = "Sorry, I don't have information about that event."
-        return response
+#     if event_id is None or event_id not in hackathon_events:
+#         response.speech = "Sorry, I don't have information about that event."
+#         return response
     
-    event_details = hackathon_events[event_id]
-    event_time = event_details[0]
-    event_name = event_details[1]
+#     event_details = hackathon_events[event_id]
+#     event_time = event_details[0]
+#     event_name = event_details[1]
 
-    response.speech = "{} is at {}.".format(event_name, event_time)
+#     response.speech = "{} is at {}.".format(event_name, event_time)
 
-    return response
+#     return response
 
 
 def handle_intent_stop_cancel(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
@@ -113,10 +113,9 @@ intent_handlers = {
     alexa.Request.INTENT_FALLBACK: handle_intent_help,
     alexa.Request.INTENT_HELP: handle_intent_help,
     alexa.Request.INTENT_CANCEL: handle_intent_stop_cancel,
-    alexa.Request.INTENT_STOP: handle_intent_stop_cancel,
-    "what_day": handle_intent_what_day,
-    "event_time": handle_intent_event_time
+    alexa.Request.INTENT_STOP: handle_intent_stop_cancel
+    
 }
-
+ 
 router = alexa.Router(request_handlers, intent_handlers)
 lambda_handler = router.handle_request
