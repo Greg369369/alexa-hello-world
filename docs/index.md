@@ -9,9 +9,11 @@ Clemson Canvas is and Alexa skill which can make keeping up with your classes ea
 ## Open the skill, by asking Alexa
 ### *Alexa, open Clemson Canvas*
 ![Launch](https://devinnarula.github.io/alexa-hello-world/AlexaOpenCanvas.jpg)
-## Ask Alexa about your classes and grades
+## Ask Alexa about your classes and assignments (Start the sentence with "Alexa, ask Clemson Canvas")
 ![CurrentClasses](https://devinnarula.github.io/alexa-hello-world/duetoday.jpg)
 ![CurrentClasses](https://devinnarula.github.io/alexa-hello-world/WhatClasses.jpg)
+![CurrentClasses](https://devinnarula.github.io/alexa-hello-world/doihaveassignmentsdue.jpg)
+![CurrentClasses](https://devinnarula.github.io/alexa-hello-world/upcomingassignments.jpg)
 
 ## Development Information
 This project was created by Gage Gailbreath, Devin Narula, Forrest Zach, and Gregory Znoyko for the 2019 CUHackit HelloWorld hackathon.
