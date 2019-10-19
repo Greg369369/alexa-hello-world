@@ -19,6 +19,7 @@ import alexa
 import random
 import logging
 import API
+from datetime import datetime
 
 sample_questions = [
     "Is there anything due today?",
@@ -73,10 +74,10 @@ def handle_intent_help(request: alexa.IntentRequest, logger: logging.Logger) -> 
 def handle_intent_current_classes(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
-    courses = API.get_courses().values
+    courses = list(API.get_courses().values())
 
     sentence =  ", ".join(courses[:-1])
-    sentence = sentence+", and".join(courses[-1])
+    sentence += ", and "+courses[-1]
 
     response.speech = sentence
 
@@ -94,11 +95,13 @@ def handle_intent_assignment_due(request: alexa.IntentRequest, logger: logging.L
 
     response.speech = "Your upcoming assignments are"
 
-    uassignments = API.get_assignments({"bucket": "upcoming"}) 
+    uassignments = API.get_assignments({"bucket": "upcoming", "per_page": 1000}) 
 
-    for item in uassignments
+    for item in uassignments:
         name=item["name"]
-        response.speech += name + " "
+        due_date=item["due_date"]
+        date=datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S%z")
+        response.speech += name + " " + date.strftime("%d %B, %Y") + " ,"
 
     return response
 

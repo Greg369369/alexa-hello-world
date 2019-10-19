@@ -17,4 +17,4 @@ Clemson Canvas is and Alexa skill which can make keeping up with your classes ea
 
 ## Development Information
 This project was created by Gage Gailbreath, Devin Narula, Forrest Zach, and Gregory Znoyko for the 2019 CUHackit Helloworld hackathon.
-![Helloworld](https://devinnarula.github.io/alexa-hello-world/Helloworld.jpg)
+![Helloworld](https://devinnarula.github.io/alexa-hello-world/Helloworld.png)

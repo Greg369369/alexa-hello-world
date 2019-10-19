@@ -1,5 +1,6 @@
 import requests
 import os
+from datetime import datetime
 
 access_token = os.getenv('CANVAS_ACCESS_TOKEN')
 
@@ -35,7 +36,6 @@ def get_courses():
         courses[id]=name
     return courses
 #print(get_courses())
-
 def get_assignments(param):
     course_ids=get_courses().keys()
     master_list=[]
@@ -46,9 +46,18 @@ def get_assignments(param):
             name=item["name"]
             due_date=item["due_at"]
             assignment_id=item["id"]
-            master_list.append({"course_id": id,"due_date": due_date,"assignment_id":assignment_id,"name":name})
+            master_list.append({"course_id": id,"due_date": due_date,"assignment_id": assignment_id,"name": name})
     return master_list
-print(get_assignments({"per_page": 1000}))
-
+# print(get_assignments({"per_page": 1000}))
+# def get_assignments_day(date):
+#     date=datetime.datetime.strptime(date,"%y/%m/%d")
+#     assignments=get_assignments({"per_page": 1000})
+#     nextdays=(date + datetime.timedelta(days=6))
+#     upcoming_assignments=[]
+#     for assignment in assignments:
+#         if(assignment["due_date"]>=date and assignment["due_date"]<nextdays):
+#             upcoming_assignments.append({"due_date": due_date,"name": name})
+#     return upcoming_assignmentss
+# print(get_assignments_day("2019/10/19"))
  #https://canvas.instructure.com/api/v1/courses/{courseid}/assignments?per_page=1000
  #https://canvas.instructure.com/doc/api/assignments.html
