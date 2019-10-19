@@ -20,9 +20,8 @@ import random
 import logging
 
 sample_questions = [
-    "When is the hackathon?",
-    "What time is cup stacking?",
-    "What time is judging?"
+    "Is there anything due today?",
+    "What is my grade in math?"
 ]
 
 def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> alexa.Response:
@@ -39,7 +38,7 @@ def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> ale
 def handle_intent_help(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
-    response.speech = "You can ask me basic questions about the hackathon. For example, try asking: "
+    response.speech = "You can ask me questions about your classes. For example, try asking: "
     response.speech += random.choice(sample_questions)
 
     return response
