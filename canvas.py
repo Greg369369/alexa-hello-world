@@ -25,37 +25,11 @@ sample_questions = [
     "What time is judging?"
 ]
 
-hackathon_events = {
-    "OPEN_CEREMONY": 
-        ("8:30 am", "Opening Ceremony"),
-    "BEGIN_HACK": 
-        ("9:00 am", "Hacking Begins"),
-    "IDEA_JAM": 
-        ("9:30 am", "Idea Jam"),
-    "GITHUB_WORKSHOP": 
-        ("10:30 am", "Intro to GitHub Workshop"),
-    "LUNCH": 
-        ("12:00 pm", "Lunch"),
-    "CUP_STACK": 
-        ("2:00 pm", "Cup Stacking"),
-    "VR_DEMO": 
-        ("3:30 pm", "VR Demo"),
-    "END_HACK": 
-        ("6:00 pm", "Hacking Ends"),
-    "DINNER": 
-        ("6:30 pm", "Dinner"),
-    "JUDGE": 
-        ("7:00 pm", "Judging and Demos"),
-    "CLOSE_CEREMONY": 
-        ("8:00 pm", "Closing Ceremony")
-}
-
-
 def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
-    response.speech = "Hi there! You've successfully launched the Hello World demo skill. "
-    response.speech += "You can ask me basic questions about the hackathon. What do you want to know?"
+    response.speech = "Hi there! You've successfully launched the Clemson Canvas skill. "
+    response.speech += "You can ask me questions about your grades, classes, homework assignments on Canvas. What do you want to know?"
 
     response.end_session = False
 
