@@ -14,7 +14,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 zip: clean
-	zip upload_to_lambda.zip *.py
+	cd package; zip -r ../upload_to_lambda.zip *
+	zip -g upload_to_lambda.zip *.py
 
 clean:
 	rm -f upload_to_lambda.zip
