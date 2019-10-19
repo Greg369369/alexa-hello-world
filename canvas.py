@@ -18,6 +18,7 @@
 import alexa
 import random
 import logging
+import API
 
 sample_questions = [
     "Is there anything due today?",
@@ -28,7 +29,7 @@ def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> ale
     response = alexa.Response()
 
     response.speech = "Hi there! You've successfully launched the Canvas skill. "
-    response.speech += "You can ask me questions about your grades, classes, homework assignments on Canvas. What do you want to know?"
+    response.speech += "You can ask me questions about your grades, classes, or homework assignments on Canvas. What do you want to know?"
 
     response.end_session = False
 
@@ -69,11 +70,35 @@ def handle_intent_help(request: alexa.IntentRequest, logger: logging.Logger) -> 
 
 #     return response
 
+def handle_intent_current_classes(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+    response = alexa.Response()
+
+    courses = API.get_courses().values
+
+    sentence =  ", ".join(courses[:-1])
+    sentence = sentence+", and".join(courses[-1])
+
+    response.speech = sentence
+
+    return response
 
 def handle_intent_stop_cancel(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "Goodbye."
+
+    return response
+    
+def handle_intent_assignment_due(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+    response = alexa.Response()
+
+    response.speech = "Your upcoming assignments are"
+
+    uassignments = API.get_assignments({"bucket": "upcoming"}) 
+
+    for item in uassignments
+        name=item["name"]
+        response.speech += name + " "
 
     return response
 
@@ -86,8 +111,9 @@ intent_handlers = {
     alexa.Request.INTENT_FALLBACK: handle_intent_help,
     alexa.Request.INTENT_HELP: handle_intent_help,
     alexa.Request.INTENT_CANCEL: handle_intent_stop_cancel,
-    alexa.Request.INTENT_STOP: handle_intent_stop_cancel
-    
+    alexa.Request.INTENT_STOP: handle_intent_stop_cancel,
+    "CURRENT_CLASSES": handle_intent_current_classes,
+    "ASSIGNMENT_DUE": handle_intent_assignment_due
 }
  
 router = alexa.Router(request_handlers, intent_handlers)
