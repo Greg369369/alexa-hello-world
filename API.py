@@ -1,6 +1,6 @@
 import requests
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 access_token = os.getenv('CANVAS_ACCESS_TOKEN')
 
@@ -45,19 +45,39 @@ def get_assignments(param):
             id=course_id
             name=item["name"]
             due_date=item["due_at"]
+
+            if due_date is None:
+                continue
+
             assignment_id=item["id"]
             master_list.append({"course_id": id,"due_date": due_date,"assignment_id": assignment_id,"name": name})
     return master_list
-# print(get_assignments({"per_page": 1000}))
-# def get_assignments_day(date):
-#     date=datetime.datetime.strptime(date,"%y/%m/%d")
-#     assignments=get_assignments({"per_page": 1000})
-#     nextdays=(date + datetime.timedelta(days=6))
-#     upcoming_assignments=[]
-#     for assignment in assignments:
-#         if(assignment["due_date"]>=date and assignment["due_date"]<nextdays):
-#             upcoming_assignments.append({"due_date": due_date,"name": name})
-#     return upcoming_assignmentss
-# print(get_assignments_day("2019/10/19"))
- #https://canvas.instructure.com/api/v1/courses/{courseid}/assignments?per_page=1000
- #https://canvas.instructure.com/doc/api/assignments.html
+def get_assignments_day(date):
+    date=datetime.strptime(date,"%Y-%m-%d")
+    date=date.replace(hour=0, minute=0, second=0, microsecond=0)
+    assignments=get_assignments({"per_page": 50})
+    upcoming_assignments=[]
+    for assignment in assignments:
+        assignment_due_date=datetime.strptime(assignment["due_date"], "%Y-%m-%dT%H:%M:%SZ")
+        assignment_due_date=assignment_due_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        if date==assignment_due_date:
+            upcoming_assignments.append({"due_date": assignment_due_date.strftime("%d %B, %Y"),"name": assignment["name"]})
+    return upcoming_assignments
+# print(get_assignments_day("2019-10-25"))
+def get_assignments_soon():
+    date=datetime.now()
+    date=date.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date=date + timedelta(days=7)
+    assignments=get_assignments({"per_page": 50})
+    upcoming_assignments=[]
+    for assignment in assignments:
+        assignment_due_date=datetime.strptime(assignment["due_date"], "%Y-%m-%dT%H:%M:%SZ")
+        assignment_due_date=assignment_due_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        if assignment_due_date<end_date and assignment_due_date>date:
+            upcoming_assignments.append({"due_date": assignment_due_date.strftime("%d %B, %Y"),"name": assignment["name"]})
+    return upcoming_assignments
+#print(get_assignments_soon())
+#print(get_assignments_day("2019-10-18"))
+#  #https://canvas.instructure.com/api/v1/courses/{courseid}/assignments?per_page=1000
+#  #https://canvas.instructure.com/doc/api/assignments.html
+#2019-10-29T19:45:00Z

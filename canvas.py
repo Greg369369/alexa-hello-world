@@ -23,14 +23,14 @@ from datetime import datetime
 
 sample_questions = [
     "Is there anything due today?",
-    "What is my grade in math?"
+    "What classes am I taking?"
 ]
 
 def handle_request_launch(request: alexa.Request, logger: logging.Logger) -> alexa.Response:
     response = alexa.Response()
 
     response.speech = "Hi there! You've successfully launched the Canvas skill. "
-    response.speech += "You can ask me questions about your grades, classes, or homework assignments on Canvas. What do you want to know?"
+    response.speech += "You can ask me questions about your classes or homework assignments on Canvas. What do you want to know?"
 
     response.end_session = False
 
@@ -95,16 +95,38 @@ def handle_intent_assignment_due(request: alexa.IntentRequest, logger: logging.L
 
     response.speech = "Your upcoming assignments are"
 
-    uassignments = API.get_assignments({"bucket": "upcoming", "per_page": 1000}) 
+    uassignments = API.get_assignments_soon() 
 
     for item in uassignments:
         name=item["name"]
         due_date=item["due_date"]
-        date=datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S%z")
-        response.speech += name + " " + date.strftime("%d %B, %Y") + " ,"
+        response.speech += name + " " + due_date + " ,"
 
     return response
 
+def handle_intent_assignments(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+    response = alexa.Response()
+
+    response.speech = "Your assignments are"
+
+    uassignments = API.get_assignments_day(request.value_of_slot("Time"))
+
+    if len(uassignments)<1:
+        response.speech="Lucky you. You have no assignments due that day."
+    
+    for item in uassignments:
+        name=item["name"]
+        due_date=item["due_date"]
+        response.speech += name + " " + due_date + " ,"
+
+    return response
+
+def handle_intent_future_intents(request: alexa.IntentRequest, logger: logging.Logger) -> alexa.Response:
+    response = alexa.Response()
+
+    response.speech = "This request is currently in development and will be available in the future."
+
+    return response 
 
 request_handlers = {
     alexa.Request.TYPE_LAUNCH: handle_request_launch,
@@ -116,7 +138,9 @@ intent_handlers = {
     alexa.Request.INTENT_CANCEL: handle_intent_stop_cancel,
     alexa.Request.INTENT_STOP: handle_intent_stop_cancel,
     "CURRENT_CLASSES": handle_intent_current_classes,
-    "ASSIGNMENT_DUE": handle_intent_assignment_due
+    "ASSIGNMENT_DUE": handle_intent_assignment_due,
+    "CLASS_GRADE": handle_intent_future_intents,
+    "ASSIGNMENTS": handle_intent_assignments
 }
  
 router = alexa.Router(request_handlers, intent_handlers)
